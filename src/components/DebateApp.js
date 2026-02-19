@@ -637,8 +637,9 @@ const DebateApp = () => {
       setTimeout(() => startListening(), 500);
     }
   };
-
+const debateEndedRef = useRef(false);
   const startDebate = (topic) => {
+    debateEndedRef.current = false;
     setSelectedTopic(topic);
     setTimeRemaining(debateTimer * 60);
     setIsDebateActive(true);
