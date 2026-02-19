@@ -675,22 +675,52 @@ const DebateApp = () => {
   };
 
   const endDebateNaturally = async () => {
-    console.log('Debate ended naturally - timer completed');
-    setIsDebateActive(false);
-    stopListening();
-    setIsAITyping(true);
-    
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-    setIsAISpeaking(false);
-    
-    const summary = await generateDebateSummary(selectedTopic, messages);
-    setDebateSummary(summary);
-    setCurrentScreen('summary');
-    setIsAITyping(false);
-  };
+  if (debateEndedRef.current) return;
+  debateEndedRef.current = true;
 
+  console.log('Debate ended naturally - timer completed');
+  setIsDebateActive(false);
+  stopListening();
+  setIsAITyping(true);
+  
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+  setIsAISpeaking(false);
+  
+  const summary = await generateDebateSummary(selectedTopic, messages);
+
+  // Save to backend
+  try {
+    const token = localStorage.getItem('token');
+    if (token) {
+      await fetch('https://ai-debate-arena-q031.onrender.com/debates/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          topic: selectedTopic,
+          winner: summary.winner,
+          humanScore: summary.humanScore,
+          aiScore: summary.aiScore,
+          userLevel,
+          debateMode,
+          messages,
+          keyPoints: summary.keyPoints
+        })
+      });
+      console.log('✅ Debate saved!');
+    }
+  } catch (err) {
+    console.error('Failed to save debate:', err);
+  }
+
+  setDebateSummary(summary);
+  setCurrentScreen('summary');
+  setIsAITyping(false);
+};
   const stopDebateManually = () => {
     console.log('Debate stopped manually by user');
     setIsDebateActive(false);
