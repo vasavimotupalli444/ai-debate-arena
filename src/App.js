@@ -34,7 +34,7 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = 'https://ai-debate-arena-q031.onrender.com/auth/google';
+    window.location.href = 'http://localhost:5000/auth/google';
   };
 
   const handleLogout = () => {
@@ -49,7 +49,7 @@ function App() {
     setLoadingHistory(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('https://ai-debate-arena-q031.onrender.com/debates/history', {
+      const res = await fetch('http://localhost:5000/debates/history', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
