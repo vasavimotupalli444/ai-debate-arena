@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, Send, Clock, Trophy, MessageSquare, Zap, FileText, User, Bot, Square, Volume2, VolumeX, Type, Share2 } from 'lucide-react';
+import { Mic, MicOff, Send, Clock, Trophy, MessageSquare, FileText, User, Bot, Square, Volume2, Type, Share2 } from 'lucide-react';
 
 // Predefined topics
 const PREDEFINED_TOPICS = [
@@ -469,9 +469,9 @@ const DebateApp = () => {
     };
   };
 
-  // Timer logic
-  useEffect(() => {
-    if (isDebateActive && timeRemaining > 0) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
+  if (isDebateActive && timeRemaining > 0) {
       timerRef.current = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
