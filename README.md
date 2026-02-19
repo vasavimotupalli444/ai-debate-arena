@@ -13,7 +13,7 @@ A **Full Stack MERN web application** for AI-powered structured debate practice.
 ## 📸 Features
 
 - 🎙️ **Voice & Text Debate Modes** — Speak or type your arguments
-- 🤖 **Real-time AI Counter-Arguments** — Powered by Google Gemini 2.0 Flash
+- 🤖 **Real-time AI Counter-Arguments** — Powered by Google Gemini 2.5 Flash
 - 📊 **Quality-Based Automatic Scoring** — Multi-factor argument analysis
 - 🏆 **Winner Declaration** — With key points extracted from the debate
 - 🎓 **Three Difficulty Levels** — School, College, and Professional
@@ -56,7 +56,7 @@ A **Full Stack MERN web application** for AI-powered structured debate practice.
 
 | Technology              | Purpose                       |
 | ----------------------- | ----------------------------- |
-| Google Gemini 2.0 Flash | AI debate response generation |
+| Google Gemini 2.5 Flash | AI debate response generation |
 | Google OAuth 2.0        | User login via Google account |
 
 ---
