@@ -637,8 +637,11 @@ const DebateApp = () => {
       setTimeout(() => startListening(), 500);
     }
   };
+const debateEndedRef = useRef(false);
 
   const startDebate = (topic) => {
+    debateEndedRef.current = false;
+
     setSelectedTopic(topic);
     setTimeRemaining(debateTimer * 60);
     setIsDebateActive(true);
@@ -673,23 +676,57 @@ const DebateApp = () => {
       }, 1000);
     }, 500);
   };
+const endDebateNaturally = async () => {
+  // 🛑 Prevent duplicate execution
+  if (debateEndedRef.current) return;
+  debateEndedRef.current = true;
 
-  const endDebateNaturally = async () => {
-    console.log('Debate ended naturally - timer completed');
-    setIsDebateActive(false);
-    stopListening();
-    setIsAITyping(true);
-    
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
+  console.log('Debate ended naturally - timer completed');
+
+  setIsDebateActive(false);
+  stopListening();
+  setIsAITyping(true);
+
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+  setIsAISpeaking(false);
+
+  const summary = await generateDebateSummary(selectedTopic, messages);
+
+  // 🔥 SAVE TO DATABASE (only once now)
+  try {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const res = await fetch('http://localhost:5000/debates/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          topic: selectedTopic,
+          winner: summary.winner,
+          humanScore: summary.humanScore,
+          aiScore: summary.aiScore,
+          userLevel,
+          debateMode,
+          messages,
+          keyPoints: summary.keyPoints
+        })
+      });
+
+      console.log('✅ Debate saved once. Status:', res.status);
     }
-    setIsAISpeaking(false);
-    
-    const summary = await generateDebateSummary(selectedTopic, messages);
-    setDebateSummary(summary);
-    setCurrentScreen('summary');
-    setIsAITyping(false);
-  };
+  } catch (err) {
+    console.error('❌ Failed to save debate:', err);
+  }
+
+  setDebateSummary(summary);
+  setCurrentScreen('summary');
+  setIsAITyping(false);
+};
+
 
   const stopDebateManually = () => {
     console.log('Debate stopped manually by user');
